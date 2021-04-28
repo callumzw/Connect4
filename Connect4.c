@@ -15,16 +15,21 @@ void newGame();
 void loadGame();
 void instructions();
 void customGame();
+void opposition(int winThreshold);
+void botLevel(int winThreshold);
 void play(char *board, int rows, int columns, int winThreshold);
+void playBotEasy(char *board, int rows, int columns, int winThreshold);
+void playBotMedium(char *board, int rows, int columns, int winThreshold);
+void playBotHard(char *board, int rows, int columns, int winThreshold);
 int takeTurn(char *board, int player,int row, int columns);
 int checkWin(char* board, int rows, int columns , int winThreshold);
 int checkFour(char *board, int, int, int, int);
+int horizontalCheck(char *board, int rows, int columns , int winThreshold);
 int horizontalCheck(char *board, int rows, int columns , int winThreshold);
 int verticalCheck(char *board, int rows, int columns, int winThreshold);
 int diagonalCheck(char *board, int rows, int columns, int winThreshold);
 int i =0;
 int choice;
-int botLevel;
 bool invalidInput;
 int winThreshold;
 void printNewGame();
@@ -62,7 +67,7 @@ int main(int argc, char *argv[]){
 void printMenu(){
 	system("cls");
 	for(i=0;i<5;i++)printf("\n");
-	printf("		         Connect 4");  
+	printf("		         Connect 4");
 	for(i=0;i<2;i++)printf("\n");	
 	printf("		..........................\n"
 			"		| 1       New Game       |\n"                
@@ -90,7 +95,7 @@ void menu()
         case 1: newGame(); invalidInput=false; break;
         case 2: loadGame(); invalidInput=false; break;
         case 3: instructions(); invalidInput=false; break;
-		case 9: invalidInput=false; break;
+		case 0: invalidInput=false; break;
         default: i=1; break;
 		}
 	}
@@ -125,7 +130,7 @@ void newGame(){
         case 1: opposition(4); invalidInput=false; break;
         case 2: opposition(5); invalidInput=false; break;
         case 3: customGame(); invalidInput=false; break;
-		case 4: invalidInput=false; break;
+		case 0: invalidInput=false; break;
         default:i=1; break;
 		}
 	}
@@ -149,17 +154,17 @@ void printOpposition() {
 		"		..........................\n"
 		"\n\n");
 }
-void opposition(x) {
+void opposition(winThreshold) {
 	printOpposition();
 	invalidInput = true;
 	bool i = 0;
 	while (invalidInput) {
-		printNewGame();
+		printOpposition();
 		if (i > 0) {
 			printf("Invalid Option, Try Again\n");
 		}
 		scanf("%d", &choice);
-		if (x = 4) {
+		if (winThreshold = 4) {
 			switch (choice) {
 			case 1: play(board6x7, SIX, SEVEN, 4); invalidInput = false; break;
 			case 2: botLevel(4); invalidInput = false; break;
@@ -177,7 +182,7 @@ void opposition(x) {
 		}
 	}
 }
-void printBotLevel() {
+void printBotLevel(winThreshold) {
 	system("cls");
 	for (i = 0; i < 5; i++)printf("\n");
 	printf("		      Opponent type?");
@@ -193,21 +198,21 @@ void printBotLevel() {
 		"		..........................\n"
 		"\n\n");
 }
-void botLevel(x) {
+void botLevel(winThreshold) {
 		printBotLevel();
 		invalidInput = true;
 		bool i = 0;
 		while (invalidInput) {
-			printNewGame();
+			printBotLevel();
 			if (i > 0) {
 				printf("Invalid Option, Try Again\n");
 			}
 			scanf("%d", &choice);
-			if (x = 4) {
+			if (winThreshold = 4) {
 				switch (choice) {
-				case 1: playBotEasy(board6x9, SIX, NINE, 4); invalidInput = false; break;
-				case 2: playBotMedium(board6x9, SIX, NINE, 4); invalidInput = false; break;
-				case 3: playBotHard(board6x9, SIX, NINE, 4); invalidInput = false; break;
+				case 1: playBotEasy(board6x9, SIX, SEVEN, 4); invalidInput = false; break;
+				case 2: playBotMedium(board6x9, SIX, SEVEN, 4); invalidInput = false; break;
+				case 3: playBotHard(board6x9, SIX, SEVEN, 4); invalidInput = false; break;
 				case 0: opposition(4); invalidInput = false; break;
 				default:i = 1; break;
 				}
@@ -216,7 +221,7 @@ void botLevel(x) {
 				switch (choice) {
 				case 1: playBotEasy(board6x9, SIX, NINE, 5); invalidInput = false; break;
 				case 2: playBotMedium(board6x9, SIX, NINE, 5); invalidInput = false; break;
-				case 3: playBotHard(board6x9, SIX, NINE, 5)invalidInput = false; break;
+				case 3: playBotHard(board6x9, SIX, NINE, 5); invalidInput = false; break;
 				case 0: opposition(5); invalidInput = false; break;
 				default:i = 1; break;
 				}
@@ -237,9 +242,7 @@ void printCustomColumns(){
             "		|            9           |\n"
             "		..........................\n"
 			"		|           10           |\n"                
-            "		..........................\n" 
-			"		| 0        Back          |\n"
-			"		..........................\n"
+            "		..........................\n"
            "\n\n");
 }
 void printCustomRows(){
@@ -256,8 +259,6 @@ void printCustomRows(){
             "		..........................\n"
 		 	"		|            9           |\n"                
             "		..........................\n"
-			"		| 0        Back          |\n"
-			"		..........................\n"
            "\n\n");
 }
 void printCustomWin(){
@@ -270,25 +271,23 @@ void printCustomWin(){
            "		..........................\n"              
            "		|            5           |\n"
            "		..........................\n"
-		   "		| 0        Back          |\n"
-		   "		..........................\n"
            "\n\n");
 }
+
 void customGame(){
 	int columns;
 	int rows;
+	int botLevel;
 	// Get Number of Columns
 	printCustomColumns();
 	scanf("%d",&choice);
 	if (choice >= 7 && choice <= 10){columns = choice;}
-	else if (choice == 0) { newGame(); }
     else{printCustomColumns(); printf("Invalid Option, Try Again\n"); scanf("%d",&choice);}
 		
 	// Get Number of Rows
 	printCustomRows();
 	scanf("%d",&choice);
 	if (choice >= 6 && choice <= 9){rows = choice;}
-	else if (choice == 0) { printCustomColumns(); }
     else{printCustomRows(); printf("Invalid Option, Try Again\n"); scanf("%d",&choice);}
 	
 	// If Custom board allows,Get 4 Or 5 connected to win
@@ -297,14 +296,11 @@ void customGame(){
 		printCustomWin();
 		scanf("%d",&choice);
 		if (choice == 4 || choice == 5){winThreshold = choice;}
-		else if (choice == 0) { printCustomRows(); }
 		else{printCustomWin(); printf("Invalid Option, Try Again\n"); scanf("%d",&choice);}
 	}
 	else{
 		winThreshold = 4;
 	}
-	printOpposition();
-	scanf("%d", &choice);
 	
 	// Play Custom Board
 	switch(columns){
@@ -342,6 +338,158 @@ void customGame(){
 		break;
 		} 
 }
+void customGameBot(){
+	int columns;
+	int rows;
+	int botLevel;
+	// Get Number of Columns
+	printCustomColumns();
+	scanf("%d",&choice);
+	if (choice >= 7 && choice <= 10){columns = choice;}
+    else{printCustomColumns(); printf("Invalid Option, Try Again\n"); scanf("%d",&choice);}
+
+	// Get Number of Rows
+	printCustomRows();
+	scanf("%d",&choice);
+	if (choice >= 6 && choice <= 9){rows = choice;}
+    else{printCustomRows(); printf("Invalid Option, Try Again\n"); scanf("%d",&choice);}
+
+	// If Custom board allows,Get 4 Or 5 connected to win
+	if (columns > 8)
+	{
+		printCustomWin();
+		scanf("%d",&choice);
+		if (choice == 4 || choice == 5){winThreshold = choice;}
+		else{printCustomWin(); printf("Invalid Option, Try Again\n"); scanf("%d",&choice);}
+	}
+	else{
+		winThreshold = 4;
+	}
+	system("cls");
+    	for (i = 0; i < 5; i++)printf("\n");
+    	printf("		      Opponent type?");
+    	for (i = 0; i < 2; i++)printf("\n");
+    	printf("		..........................\n"
+    		"		| 1         Easy          |\n"
+    		"		..........................\n"
+    		"		| 2        Medium         |\n"
+    		"		..........................\n"
+    		"		| 3         Hard          |\n"
+    		"		..........................\n"
+    		"\n\n");
+    		scanf("%d",&choice);
+            		if (choice == 1 || choice == 3){botLevel = choice;}
+            		else{printCustomWin(); printf("Invalid Option, Try Again\n"); scanf("%d",&choice);}
+
+	// Play Custom Board
+	switch(botLevel){
+	case 1:
+	switch(columns){
+        case 7:
+		switch(rows){
+			case 6: playBotEasy(board6x7,rows,columns, winThreshold); break;
+			case 7:  playBotEasy(board7x7,rows,columns, winThreshold); break;
+			case 8:  playBotEasy(board8x7,rows,columns, winThreshold); break;
+			case 9:  playBotEasy(board9x7,rows,columns, winThreshold); break;
+			}
+		break;
+        case 8:
+		switch(rows){
+			case 6: playBotEasy(board6x8,rows,columns, winThreshold); break;
+			case 7:  playBotEasy(board7x8,rows,columns, winThreshold); break;
+			case 8:  playBotEasy(board8x8,rows,columns, winThreshold); break;
+			case 9:  playBotEasy(board9x8,rows,columns, winThreshold); break;
+			}
+		break;
+        case 9:
+		switch(rows){
+			case 6: playBotEasy(board6x9,rows,columns, winThreshold); break;
+			case 7:  playBotEasy(board7x9,rows,columns, winThreshold); break;
+			case 8:  playBotEasy(board8x9,rows,columns, winThreshold); break;
+			case 9:  playBotEasy(board9x9,rows,columns, winThreshold); break;
+			}
+		break;
+		case 10:
+		switch(rows){
+			case 6: playBotEasy(board6x10,rows,columns, winThreshold); break;
+			case 7:  playBotEasy(board7x10,rows,columns, winThreshold); break;
+			case 8:  playBotEasy(board8x10,rows,columns, winThreshold); break;
+			case 9:  playBotEasy(board9x10,rows,columns, winThreshold); break;
+			}
+		break;
+		}
+		case 2:
+		switch(columns){
+                case 7:
+        		switch(rows){
+        			case 6: playBotMedium(board6x7,rows,columns, winThreshold); break;
+        			case 7:  playBotMedium(board7x7,rows,columns, winThreshold); break;
+        			case 8:  playBotMedium(board8x7,rows,columns, winThreshold); break;
+        			case 9:  playBotMedium(board9x7,rows,columns, winThreshold); break;
+        			}
+        		break;
+                case 8:
+        		switch(rows){
+        			case 6: playBotMedium(board6x8,rows,columns, winThreshold); break;
+        			case 7:  playBotMedium(board7x8,rows,columns, winThreshold); break;
+        			case 8:  playBotMedium(board8x8,rows,columns, winThreshold); break;
+        			case 9:  playBotMedium(board9x8,rows,columns, winThreshold); break;
+        			}
+        		break;
+                case 9:
+        		switch(rows){
+        			case 6: playBotMedium(board6x9,rows,columns, winThreshold); break;
+        			case 7:  playBotMedium(board7x9,rows,columns, winThreshold); break;
+        			case 8:  playBotMedium(board8x9,rows,columns, winThreshold); break;
+        			case 9:  playBotMedium(board9x9,rows,columns, winThreshold); break;
+        			}
+        		break;
+        		case 10:
+        		switch(rows){
+        			case 6: playBotMedium(board6x10,rows,columns, winThreshold); break;
+        			case 7:  playBotMedium(board7x10,rows,columns, winThreshold); break;
+        			case 8:  playBotMedium(board8x10,rows,columns, winThreshold); break;
+        			case 9:  playBotMedium(board9x10,rows,columns, winThreshold); break;
+        			}
+        		break;
+        		}
+		case 3:
+		switch(columns){
+                case 7:
+        		switch(rows){
+        			case 6: playBotHard(board6x7,rows,columns, winThreshold); break;
+        			case 7:  playBotHard(board7x7,rows,columns, winThreshold); break;
+        			case 8:  playBotHard(board8x7,rows,columns, winThreshold); break;
+        			case 9:  playBotHard(board9x7,rows,columns, winThreshold); break;
+        			}
+        		break;
+                case 8:
+        		switch(rows){
+        			case 6: playBotHard(board6x8,rows,columns, winThreshold); break;
+        			case 7:  playBotHard(board7x8,rows,columns, winThreshold); break;
+        			case 8:  playBotHard(board8x8,rows,columns, winThreshold); break;
+        			case 9:  playBotHard(board9x8,rows,columns, winThreshold); break;
+        			}
+        		break;
+                case 9:
+        		switch(rows){
+        			case 6: playBotHard(board6x9,rows,columns, winThreshold); break;
+        			case 7:  playBotHard(board7x9,rows,columns, winThreshold); break;
+        			case 8:  playBotHard(board8x9,rows,columns, winThreshold); break;
+        			case 9:  playBotHard(board9x9,rows,columns, winThreshold); break;
+        			}
+        		break;
+        		case 10:
+        		switch(rows){
+        			case 6:  playBotHard(board6x10,rows,columns, winThreshold); break;
+        			case 7:  playBotHard(board7x10,rows,columns, winThreshold); break;
+        			case 8:  playBotHard(board8x10,rows,columns, winThreshold); break;
+        			case 9:  playBotHard(board9x10,rows,columns, winThreshold); break;
+        			}
+        		break;
+        		}
+		}
+}
 void playerNames(){
 	system("cls");
 		for(i=0;i<5;i++)printf("\n");
@@ -364,6 +512,19 @@ void playerNames(){
            "\n\n");
 	scanf("%s",player_two);
 
+}
+void name(){
+system("cls");
+		for(i=0;i<5;i++)printf("\n");
+	printf("		      Enter Name for");
+	for(i=0;i<2;i++)printf("\n");
+	printf("		..........................\n"
+			"		|        Player 1        |\n"
+           "		..........................\n"
+           "\n\n");
+	scanf("%s", player_one);
+	getchar();
+	strcpy(player_two,"Computer");
 }
 void play(char *board, int rows, int columns, int winThreshold){
 	playerNames();
@@ -390,13 +551,75 @@ if(turn == rows * columns && !done){
 	   printf("%s (O) wins!\n", player_two);
    }
    }
-   
+
 	Sleep(3000);
-	printf("Press Enter to return to Menu.\n"); 
+	printf("Press Enter to return to Menu.\n");
 	getch(); 
 }
 
-void playBot(char *board, int rows, int columns, int winThreshold) {
+void playBotEasy(char *board, int rows, int columns, int winThreshold) {
+	name();
+	int turn, done = 0;
+	memset(board, ' ', rows * columns);
+	for (turn = 0; turn < rows * columns && !done; turn++) {
+		printBoard(board, rows, columns);
+		while (!takeTurnBotEasy(board, turn % 2, rows, columns)) {
+			printBoard(board, rows, columns);
+			puts("**Column full!**\n");
+		}
+		done = checkWin(board, rows, columns, winThreshold);
+	}
+	printBoard(board, rows, columns);
+
+	if (turn == rows * columns && !done) {
+		puts("It's a tie!");
+	}
+	else {
+		turn--;
+		if (turn % 2 + 1 == 1) {
+			printf("%s (X) wins!\n", player_one);
+		}
+		else {
+			printf("%s (O) wins!\n", player_two);
+		}
+	}
+
+	Sleep(3000);
+	printf("Press Enter to return to Menu.\n");
+	getch();
+}
+void playBotMedium(char *board, int rows, int columns, int winThreshold) {
+	playerNames();
+	int turn, done = 0;
+	memset(board, ' ', rows * columns);
+	for (turn = 0; turn < rows * columns && !done; turn++) {
+		printBoard(board, rows, columns);
+		while (!takeTurn(board, turn % 2, rows, columns)) {
+			printBoard(board, rows, columns);
+			puts("**Column full!**\n");
+		}
+		done = checkWin(board, rows, columns, winThreshold);
+	}
+	printBoard(board, rows, columns);
+
+	if (turn == rows * columns && !done) {
+		puts("It's a tie!");
+	}
+	else {
+		turn--;
+		if (turn % 2 + 1 == 1) {
+			printf("%s (X) wins!\n", player_one);
+		}
+		else {
+			printf("%s (O) wins!\n", player_two);
+		}
+	}
+
+	Sleep(3000);
+	printf("Press Enter to return to Menu.\n");
+	getch();
+}
+void playBotHard(char *board, int rows, int columns, int winThreshold) {
 	playerNames();
 	int turn, done = 0;
 	memset(board, ' ', rows * columns);
@@ -496,16 +719,47 @@ int takeTurn(char *board, int player,int rows, int columns){
    }
    return 0;
 }
+int takeTurnBotEasy(char *board, int player,int rows, int columns){
+	  int row, col = 0;
+	  if (player == 0){
+	  printf("%s (X) Choose a column: ", player_one, PIECES[player]);
+	  }
+	  else {
+	  printf("%s (O) Choose a column: ", player_two, PIECES[player]);
+	  Sleep(1000);
+	  }
 
-int undo(){
+if (player == 0){
+   while(1){
+      if(1 != scanf("%d", &col) || col < 1 || col > columns ){
+         while(getchar() != '\n');
+         puts("Number out of bounds! Try again.");
+      } else {
+         break;
+      }
+   }
+   col--;
+   }
+
+if (player != 0){
+   col = rand() % columns;
+   }
+   for(row = rows - 1; row >= 0; row--){
+      if(board[columns * row + col] == ' '){
+         board[columns * row + col] = PIECES[player];
+         return 1;
+      }
+   }
+   return 0;
 }
-
 
 int checkWin(char *board,int rows, int columns, int winThreshold){
     return (horizontalCheck(board,rows,columns,winThreshold) || verticalCheck(board,rows,columns,winThreshold) || diagonalCheck(board,rows,columns,winThreshold));
 
 }
-
+int checkThree(char *board, int a, int b, int c){
+    return (board[a] == board[b] && board[b] == board[c] && board[a] != ' ');
+}
 int checkFour(char *board, int a, int b, int c, int d){
     return (board[a] == board[b] && board[b] == board[c] && board[c] == board[d] && board[a] != ' ');
 }
