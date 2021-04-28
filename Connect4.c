@@ -753,10 +753,40 @@ if (player != 0){
    return 0;
 }
 
-int checkWin(char *board,int rows, int columns, int winThreshold){
-    return (horizontalCheck(board,rows,columns,winThreshold) || verticalCheck(board,rows,columns,winThreshold) || diagonalCheck(board,rows,columns,winThreshold));
+int takeTurnBotMedium(char *board, int player,int rows, int columns){
+	  int row, col = 0;
+	  if (player == 0){
+	  printf("%s (X) Choose a column: ", player_one, PIECES[player]);
+	  }
+	  else {
+	  printf("%s (O) Choose a column: ", player_two, PIECES[player]);
+	  Sleep(1000);
+	  }
 
+if (player == 0){
+   while(1){
+      if(1 != scanf("%d", &col) || col < 1 || col > columns ){
+         while(getchar() != '\n');
+         puts("Number out of bounds! Try again.");
+      } else {
+         break;
+      }
+   }
+   col--;
+   }
+
+if (player != 0){
+   col = rand() % columns;
+   }
+   for(row = rows - 1; row >= 0; row--){
+      if(board[columns * row + col] == ' '){
+         board[columns * row + col] = PIECES[player];
+         return 1;
+      }
+   }
+   return 0;
 }
+
 int checkThree(char *board, int a, int b, int c){
     return (board[a] == board[b] && board[b] == board[c] && board[a] != ' ');
 }
@@ -767,8 +797,9 @@ int checkFive(char *board, int a, int b, int c, int d, int e){
     return (board[a] == board[b] && board[b] == board[c] && board[c] == board[d] && board[d] == board[e] && board[a] != ' ');
 }
 
-int horizontalCheck(char *board, int rows, int columns, int winThreshold){
-    int row, col, idx;
+int checkWin(char *board, int rows, int columns, int winThreshold){
+    int row, col, idx, count = 0;;
+     const int DIAG_RGT = columns-1, DIAG_LFT = columns+1;
 
     for(row = 0; row < rows; row++){
        for(col = 0; col < columns - 3; col++){
@@ -777,63 +808,33 @@ int horizontalCheck(char *board, int rows, int columns, int winThreshold){
           if(checkFour(board, idx, idx + 1, idx + 2, idx + 3)){
              return 1;
           }
+          else if(checkFour(board, idx, idx + columns, idx + columns * 2, idx + columns * 3)){
+          return 1;
+          }
+          else if(count <= 3 && checkFour(board, idx, idx + DIAG_LFT, idx + DIAG_LFT * 2, idx + DIAG_LFT * 3) || count >= 3 && checkFour(board, idx, idx + DIAG_RGT, idx + DIAG_RGT * 2, idx + DIAG_RGT * 3)){
+          return 1;
+          }
 		  }
 	
-		  else{
+		  else if (winThreshold == 5){
           if(checkFive(board, idx, idx + 1, idx + 2, idx + 3, idx + 4 )){
              return 1;
           }
+          else if(checkFive(board, idx, idx + columns, idx + columns * 2, idx + columns * 3, idx + columns * 4 )){
+          return 1;
+          }
+          else if(count <= 4 && checkFive(board, idx, idx + DIAG_LFT, idx + DIAG_LFT * 2, idx + DIAG_LFT * 3, idx + DIAG_LFT * 4) || count >= 3 && checkFive(board, idx, idx + DIAG_RGT, idx + DIAG_RGT * 2, idx + DIAG_RGT * 3, idx + DIAG_RGT * 4)){
+          return 1;
+          }
 		  }
+		  count++;
 	   }
+	   count=0;
     }
     return 0;
 
 }
-int verticalCheck(char *board, int rows, int columns, int winThreshold){
-    int row, col, idx;
 
-    for(row = 0; row < rows - 3; row++){
-       for(col = 0; col < columns; col++){
-          idx = columns * row + col;
-		  if (winThreshold == 4){
-          if(checkFour(board, idx, idx + columns, idx + columns * 2, idx + columns * 3)){
-             return 1;
-          }
-		  }
-		  else{
-          if(checkFive(board, idx, idx + columns, idx + columns * 2, idx + columns * 3, idx + columns * 4 )){
-             return 1;
-          }
-		  }
-       }
-    }
-    return 0;
-
-}
-int diagonalCheck(char *board, int rows, int columns, int winThreshold){
-   int row, col, idx, count = 0;
-   const int DIAG_RGT = columns-1, DIAG_LFT = columns+1;
-
-   for(row = 0; row < rows - 3; row++){
-      for(col = 0; col < columns; col++){
-         idx = columns * row + col;
-		if (winThreshold == 4){
-          if(count <= 3 && checkFour(board, idx, idx + DIAG_LFT, idx + DIAG_LFT * 2, idx + DIAG_LFT * 3) || count >= 3 && checkFour(board, idx, idx + DIAG_RGT, idx + DIAG_RGT * 2, idx + DIAG_RGT * 3)){
-            return 1;
-         }
-		  }
-		  else{
-          if(count <= 4 && checkFive(board, idx, idx + DIAG_LFT, idx + DIAG_LFT * 2, idx + DIAG_LFT * 3, idx + DIAG_LFT * 4) || count >= 3 && checkFive(board, idx, idx + DIAG_RGT, idx + DIAG_RGT * 2, idx + DIAG_RGT * 3, idx + DIAG_RGT * 4)){
-            return 1;
-         }
-		  }
-         count++;
-      }
-      count = 0;
-   }
-   return 0;
-
-}
 void loadGame(){
 	system("cls");
 	for(i=0;i<4;i++)printf("\n");
