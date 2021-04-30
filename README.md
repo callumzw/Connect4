@@ -1,9 +1,10 @@
-How to play Connect4
+How to build Connect4 application
 
-Launch Console/Command Prompt
 
-Direct to file path location, e.g 'cd C:/Games/Connect4
+Launch a Developer Command Prompt (such as for VisualStudio 2017)
+
+Direct to the file path location, e.g 'cd C:/Program Files/Connect4'
+
+Build Application with 'cl Connect4.c'
 
 Enter 'Connect4' to launch application
-
-If any errors try rebuilding the app (e.g 'cl Connect4.c')
