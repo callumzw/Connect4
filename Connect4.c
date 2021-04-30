@@ -70,11 +70,9 @@ void printMenu(){
 	printf("		         Connect 4");
 	for(i=0;i<2;i++)printf("\n");	
 	printf("		..........................\n"
-			"		| 1       New Game       |\n"                
-           "		..........................\n"              
-           "		| 2       Load Game      |\n"
+			"		| 1         Play         |\n"
            "		..........................\n"
-           "		| 3     Instructions     |\n"
+           "		| 2     Instructions     |\n"
            "		..........................\n "
 		    "		| 0         Exit         |\n"
            "		..........................\n"
@@ -93,8 +91,7 @@ void menu()
 	scanf("%d",&choice);	//GET THE USER CHOOSE
     switch(choice){
         case 1: newGame(); invalidInput=false; break;
-        case 2: loadGame(); invalidInput=false; break;
-        case 3: instructions(); invalidInput=false; break;
+        case 2: instructions(); invalidInput=false; break;
 		case 0: invalidInput=false; break;
         default: i=1; break;
 		}
@@ -589,12 +586,12 @@ void playBotEasy(char *board, int rows, int columns, int winThreshold) {
 	getch();
 }
 void playBotMedium(char *board, int rows, int columns, int winThreshold) {
-	playerNames();
+	name();
 	int turn, done = 0;
 	memset(board, ' ', rows * columns);
 	for (turn = 0; turn < rows * columns && !done; turn++) {
 		printBoard(board, rows, columns);
-		while (!takeTurn(board, turn % 2, rows, columns)) {
+		while (!takeTurnBotMedium(board, turn % 2, rows, columns)) {
 			printBoard(board, rows, columns);
 			puts("**Column full!**\n");
 		}
@@ -776,8 +773,11 @@ if (player == 0){
    }
 
 if (player != 0){
-   col = rand() % columns;
-   }
+    col = botCheck(board, rows, columns,winThreshold);
+    if (col == 0){
+    col = rand() % columns;
+    }
+    }
    for(row = rows - 1; row >= 0; row--){
       if(board[columns * row + col] == ' '){
          board[columns * row + col] = PIECES[player];
@@ -786,6 +786,7 @@ if (player != 0){
    }
    return 0;
 }
+
 
 int checkThree(char *board, int a, int b, int c){
     return (board[a] == board[b] && board[b] == board[c] && board[a] != ' ');
@@ -832,18 +833,50 @@ int checkWin(char *board, int rows, int columns, int winThreshold){
 	   count=0;
     }
     return 0;
-
 }
+int botCheck(char *board, int rows, int columns, int winThreshold){
+    int row, col, idx, count = 0;
+    int num=0;
 
-void loadGame(){
-	system("cls");
-	for(i=0;i<4;i++)printf("\n");
-		printf("	**Under Construction**\n\n");
-		
-		printf("Press Enter to return to Menu.\n");
-   getch();
-   menu(); 
+     const int DIAG_RGT = columns-1, DIAG_LFT = columns+1;
 
+    for(row = 0; row < rows; row++){
+       for(col = 0; col < columns - 3; col++){
+          idx = columns * row + col;
+		  if (winThreshold == 4){
+          if(checkThree(board, idx, idx + 1, idx + 2)){
+               num = col + 3;
+          }
+          else if(checkThree(board, idx, idx + columns, idx + columns * 2)){
+          num = col + 3;
+          }
+          else if(count <= 3 && checkThree(board, idx, idx + DIAG_LFT, idx + DIAG_LFT * 2)){
+          num = col - 3;
+          }
+          else if(count >= 3 && checkThree(board, idx, idx + DIAG_RGT, idx + DIAG_RGT * 2)){
+          num = col + 3;
+          }
+		  }
+
+		  else if (winThreshold == 5){
+          if(checkFour(board, idx, idx + 1, idx + 2, idx + 3)){
+             num = col + 4;
+          }
+          else if(checkFour(board, idx, idx + columns, idx + columns * 2, idx + columns * 3)){
+            num = col + 4;
+          }
+          else if(count <= 3 && checkFour(board, idx, idx + DIAG_LFT, idx + DIAG_LFT * 2, idx + DIAG_LFT * 3)){
+            num = col - 4;
+          }
+          else if(count >= 3 && checkFour(board, idx, idx + DIAG_RGT, idx + DIAG_RGT * 2, idx + DIAG_RGT * 3)){
+          num = col + 4;
+          }
+		  }
+		  count++;
+	   }
+	   count=0;
+    }
+    return num;
 }
 void instructions()
 {
