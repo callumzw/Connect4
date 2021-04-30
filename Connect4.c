@@ -24,10 +24,7 @@ void playBotHard(char *board, int rows, int columns, int winThreshold);
 int takeTurn(char *board, int player,int row, int columns);
 int checkWin(char* board, int rows, int columns , int winThreshold);
 int checkFour(char *board, int, int, int, int);
-int horizontalCheck(char *board, int rows, int columns , int winThreshold);
-int horizontalCheck(char *board, int rows, int columns , int winThreshold);
-int verticalCheck(char *board, int rows, int columns, int winThreshold);
-int diagonalCheck(char *board, int rows, int columns, int winThreshold);
+int checkFive(char *board, int, int, int, int);
 int i =0;
 int choice;
 bool invalidInput;
@@ -617,35 +614,35 @@ void playBotMedium(char *board, int rows, int columns, int winThreshold) {
 	getch();
 }
 void playBotHard(char *board, int rows, int columns, int winThreshold) {
-	playerNames();
-	int turn, done = 0;
-	memset(board, ' ', rows * columns);
-	for (turn = 0; turn < rows * columns && !done; turn++) {
-		printBoard(board, rows, columns);
-		while (!takeTurn(board, turn % 2, rows, columns)) {
-			printBoard(board, rows, columns);
-			puts("**Column full!**\n");
-		}
-		done = checkWin(board, rows, columns, winThreshold);
-	}
-	printBoard(board, rows, columns);
+	name();
+    	int turn, done = 0;
+    	memset(board, ' ', rows * columns);
+    	for (turn = 0; turn < rows * columns && !done; turn++) {
+    		printBoard(board, rows, columns);
+    		while (!takeTurnBotMedium(board, turn % 2, rows, columns)) {
+    			printBoard(board, rows, columns);
+    			puts("**Column full!**\n");
+    		}
+    		done = checkWin(board, rows, columns, winThreshold);
+    	}
+    	printBoard(board, rows, columns);
 
-	if (turn == rows * columns && !done) {
-		puts("It's a tie!");
-	}
-	else {
-		turn--;
-		if (turn % 2 + 1 == 1) {
-			printf("%s (X) wins!\n", player_one);
-		}
-		else {
-			printf("%s (O) wins!\n", player_two);
-		}
-	}
+    	if (turn == rows * columns && !done) {
+    		puts("It's a tie!");
+    	}
+    	else {
+    		turn--;
+    		if (turn % 2 + 1 == 1) {
+    			printf("%s (X) wins!\n", player_one);
+    		}
+    		else {
+    			printf("%s (O) wins!\n", player_two);
+    		}
+    	}
 
-	Sleep(3000);
-	printf("Press Enter to return to Menu.\n");
-	getch();
+    	Sleep(3000);
+    	printf("Press Enter to return to Menu.\n");
+    	getch();
 }
 
 void printBoard(char *board, int rows,int columns){
@@ -803,28 +800,39 @@ int checkWin(char *board, int rows, int columns, int winThreshold){
      const int DIAG_RGT = columns-1, DIAG_LFT = columns+1;
 
     for(row = 0; row < rows; row++){
-       for(col = 0; col < columns - 3; col++){
+       for(col = 0; col < columns; col++){
           idx = columns * row + col;
 		  if (winThreshold == 4){
+		  // horizontal check
+		  if (col != (columns - 2)){
           if(checkFour(board, idx, idx + 1, idx + 2, idx + 3)){
              return 1;
           }
-          else if(checkFour(board, idx, idx + columns, idx + columns * 2, idx + columns * 3)){
+          }
+          if (row != rows - 3){
+          // Vertical check
+          if(checkFour(board, idx, idx + columns, idx + columns * 2, idx + columns * 3)){
           return 1;
           }
-          else if(count <= 3 && checkFour(board, idx, idx + DIAG_LFT, idx + DIAG_LFT * 2, idx + DIAG_LFT * 3) || count >= 3 && checkFour(board, idx, idx + DIAG_RGT, idx + DIAG_RGT * 2, idx + DIAG_RGT * 3)){
+          }
+          // diagonal check
+          if(count <= 3 && checkFour(board, idx, idx + DIAG_LFT, idx + DIAG_LFT * 2, idx + DIAG_LFT * 3) || count >= 3 && checkFour(board, idx, idx + DIAG_RGT, idx + DIAG_RGT * 2, idx + DIAG_RGT * 3)){
           return 1;
           }
 		  }
-	
+
 		  else if (winThreshold == 5){
+		   if (col != (columns - 2)){
           if(checkFive(board, idx, idx + 1, idx + 2, idx + 3, idx + 4 )){
              return 1;
           }
-          else if(checkFive(board, idx, idx + columns, idx + columns * 2, idx + columns * 3, idx + columns * 4 )){
+          }
+          if (row != rows - 4){
+          if(checkFive(board, idx, idx + columns, idx + columns * 2, idx + columns * 3, idx + columns * 4 )){
           return 1;
           }
-          else if(count <= 4 && checkFive(board, idx, idx + DIAG_LFT, idx + DIAG_LFT * 2, idx + DIAG_LFT * 3, idx + DIAG_LFT * 4) || count >= 3 && checkFive(board, idx, idx + DIAG_RGT, idx + DIAG_RGT * 2, idx + DIAG_RGT * 3, idx + DIAG_RGT * 4)){
+          }
+          if(count <= 4 && checkFive(board, idx, idx + DIAG_LFT, idx + DIAG_LFT * 2, idx + DIAG_LFT * 3, idx + DIAG_LFT * 4) || count >= 3 && checkFive(board, idx, idx + DIAG_RGT, idx + DIAG_RGT * 2, idx + DIAG_RGT * 3, idx + DIAG_RGT * 4)){
           return 1;
           }
 		  }
@@ -885,7 +893,7 @@ void instructions()
 	printf("		    Connect 4\n");
 	for(i=0;i<2;i++)printf("\n");
 	printf("			Rules\n");
-		printf("	The Rules to Connect 4 are simple. \n	Get a line of 4 of your peices connected vertically, horizontally or diagonally. \n	Each player will take a turn to place a peice into a column.  \n\n\n");
+		printf("	The Rules to Connect 4 are simple. \n	Get a line of 4 of your pieces connected vertically, horizontally or diagonally. \n	Each player will take a turn to place a piece into a column.  \n\n\n");
 	printf("Press Enter to return to Menu.\n");
    getch();
    menu();
