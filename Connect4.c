@@ -24,7 +24,7 @@ void playBotHard(char *board, int rows, int columns, int winThreshold);
 int takeTurn(char *board, int player,int row, int columns);
 int checkWin(char* board, int rows, int columns , int winThreshold);
 int checkFour(char *board, int, int, int, int);
-int checkFive(char *board, int, int, int, int);
+int checkFive(char *board, int, int, int, int, int);
 int i =0;
 int choice;
 bool invalidInput;
@@ -89,7 +89,7 @@ void menu()
     switch(choice){
         case 1: newGame(); invalidInput=false; break;
         case 2: instructions(); invalidInput=false; break;
-		case 0: invalidInput=false; break;
+		case 0: exit(0);invalidInput=false;  break;
         default: i=1; break;
 		}
 	}
@@ -158,7 +158,7 @@ void opposition(winThreshold) {
 			printf("Invalid Option, Try Again\n");
 		}
 		scanf("%d", &choice);
-		if (winThreshold = 4) {
+		if (winThreshold == 4) {
 			switch (choice) {
 			case 1: play(board6x7, SIX, SEVEN, 4); invalidInput = false; break;
 			case 2: botLevel(4); invalidInput = false; break;
